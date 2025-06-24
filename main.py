@@ -1,36 +1,53 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
+import fitz  # PyMuPDF
+import pytesseract
 from PIL import Image
+import io
+from docx import Document
 import os
-import shutil
 import uuid
+
+# ✅ Set path to tesseract.exe manually
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "✅ SwiftConvert API is running. Visit /docs to use it."}
+@app.post("/pdf-to-word-ocr")
+async def pdf_to_word_ocr(file: UploadFile = File(...)):
+    # Save uploaded PDF temporarily
+    temp_pdf_path = f"temp_{uuid.uuid4()}.pdf"
+    with open(temp_pdf_path, "wb") as f:
+        f.write(await file.read())
 
-@app.post("/image-to-pdf")
-async def image_to_pdf(files: list[UploadFile] = File(...)):
-    temp_dir = "temp"
-    os.makedirs(temp_dir, exist_ok=True)
+    # Load PDF with PyMuPDF
+    doc = fitz.open(temp_pdf_path)
+    ocr_texts = []
 
-    image_list = []
+    for page_num in range(len(doc)):
+        page = doc.load_page(page_num)
+        pix = page.get_pixmap(dpi=300)  # Higher DPI = better OCR
+        img_bytes = pix.tobytes("png")
+        image = Image.open(io.BytesIO(img_bytes))
 
-    for file in files:
-        input_path = os.path.join(temp_dir, file.filename)
-        with open(input_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+        # Perform OCR on image
+        text = pytesseract.image_to_string(image, lang="eng")
+        ocr_texts.append(f"--- Page {page_num + 1} ---\n{text.strip()}\n")
 
-        img = Image.open(input_path).convert("RGB")
-        image_list.append(img)
+    doc.close()  # ✅ Close PDF before deleting the file
 
-    # Save all images as one PDF
-    output_filename = f"{uuid.uuid4().hex}.pdf"
-    output_path = os.path.join(temp_dir, output_filename)
+    # Create Word Document
+    docx_filename = f"output_{uuid.uuid4()}.docx"
+    document = Document()
+    for page_text in ocr_texts:
+        document.add_paragraph(page_text)
+        document.add_page_break()
+    document.save(docx_filename)
 
-    if image_list:
-        image_list[0].save(output_path, save_all=True, append_images=image_list[1:])
+    # Clean up temp PDF
+    os.remove(temp_pdf_path)
 
-    return FileResponse(output_path, media_type='application/pdf', filename=output_filename)
+    # Return the .docx file as download
+    return FileResponse(docx_filename,
+                        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        filename="converted.docx")
