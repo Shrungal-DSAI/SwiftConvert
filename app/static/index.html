@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SwiftConvert Upload</title>
+</head>
+<body>
+  <h2>Upload PDF for Conversion</h2>
+
+  <form action="/pdf-to-word-no-ocr" method="post" enctype="multipart/form-data">
+    <h3>PDF to Word (no OCR)</h3>
+    <input type="file" name="file" accept=".pdf" required>
+    <button type="submit">Convert (no OCR)</button>
+  </form>
+
+  <form action="/pdf-to-word-ocr" method="post" enctype="multipart/form-data" style="margin-top: 20px;">
+    <h3>PDF to Word (with OCR)</h3>
+    <input type="file" name="file" accept=".pdf" required>
+    <button type="submit">Convert (with OCR)</button>
+  </form>
+
+  <form action="/image-to-pdf" method="post" enctype="multipart/form-data" style="margin-top: 20px;">
+    <h3>Image to PDF</h3>
+    <input type="file" name="file" accept="image/*" required>
+    <button type="submit">Convert Image</button>
+  </form>
+</body>
+</html>

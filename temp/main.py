@@ -1,3 +1,6 @@
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 import fitz  # PyMuPDF
@@ -51,3 +54,10 @@ async def pdf_to_word_ocr(file: UploadFile = File(...)):
     return FileResponse(docx_filename,
                         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                         filename="converted.docx")
+
+
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/upload", response_class=HTMLResponse)
+def upload_form(request: Request):
+    return templates.TemplateResponse("upload.html", {"request": request})

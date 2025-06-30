@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftConvert Upload</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff; /* White card background */
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #2c3e50; /* Dark blue-gray for heading */
+            margin-bottom: 28px;
+            font-size: 2.25rem; /* Tailwind text-4xl */
+            font-weight: 700; /* Tailwind font-bold */
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 16px; /* Space between input and button */
+        }
+        input[type="file"] {
+            border: 2px dashed #a7c5ed; /* Light blue dashed border */
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            background-color: #e0f2fe; /* Very light blue background */
+            color: #334155; /* Slate-700 for text */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="file"]::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        input[type="file"]::before {
+            content: 'Select File';
+            display: inline-block;
+            background: #4a90e2; /* Blue-500 */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            outline: none;
+            white-space: nowrap;
+            -webkit-user-select: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+        input[type="file"]:hover::before {
+            background-color: #357ABD; /* Darker blue on hover */
+        }
+        button[type="submit"] {
+            background-color: #4a90e2; /* Blue-500 */
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            width: 100%;
+        }
+        button[type="submit"]:hover {
+            background-color: #357ABD; /* Darker blue on hover */
+            transform: translateY(-2px);
+        }
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="container">
+        <h1>Upload File for Conversion</h1>
+
+        <!-- PDF to Word (No OCR) Form -->
+        <form action="/pdf-to-word-no-ocr" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Convert PDF (No OCR)</button>
+        </form>
+
+        <!-- PDF to Word (With OCR) Form -->
+        <form action="/pdf-to-word-ocr" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Convert PDF (With OCR)</button>
+        </form>
+
+        <!-- Image to PDF Form -->
+        <form action="/image-to-pdf" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Convert Image to PDF</button>
+        </form>
+    </div>
+</body>
+</html>
